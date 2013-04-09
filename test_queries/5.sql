@@ -1,4 +1,6 @@
-create temporary table derricks as (select SQL_NO_CACHE uid from users where name like 'DERRICK MYERS' and age=36);
-create temporary table derrick_movies as (select SQL_NO_CACHE mid from derricks natural join rated where rating=10);
-create temporary table derrick_directors as (select SQL_NO_CACHE pid from derrick_movies natural join directed);
-select SQL_NO_CACHE name from derrick_directors natural join people; 
+create temporary table derrick_movies as (select R.mid
+						from users U, rated R
+						where U.name like 'Derrick Myers' and U.age=36 and U.uid=R.uid and R.rating=10);
+select SQL_NO_CACHE P.name
+from derrick_movies M, directed D, people P
+where M.mid=D.mid and D.pid=P.pid;
