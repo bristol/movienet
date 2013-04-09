@@ -1,4 +1,6 @@
-create temporary table steves as (select SQL_NO_CACHE pid from people where name like 'Spielberg, Steven');
-create temporary table steve_movies as (select SQL_NO_CACHE distinct mid from steves natural join directed);
-create temporary table steve_actors as (select SQL_NO_CACHE distinct pid from steve_movies natural join acted_in);
-select SQL_NO_CACHE * from steve_actors natural join people;
+create temporary table steve_movies as (select SQL_NO_CACHE D.mid
+					from people P, directed D
+					where P.name like 'Spielberg, Steven' and P.pid=D.pid);
+select SQL_NO_CACHE distinct P.pid, P.name
+from people P, acted_in A, steve_movies M
+where P.pid=A.pid and A.mid=M.mid;
