@@ -1,6 +1,17 @@
-<?php
+<?php require_once("config.php"); ?>
 
-    require("config.php");
+<html>
+    <head>
+        <title>Actors, Directors, and Producers on Movienet</title>
+
+        <?php include_once("bootstrap.php"); ?>  
+  
+    </head>
+    <body>
+
+        <?php include_once("header.php"); ?>
+
+<?php
 
     $db = new mysqli($mnconfig["host"], $mnconfig["user"], $mnconfig["password"], $mnconfig["db"]);
     if ($db->connect_errno) {
@@ -28,3 +39,6 @@
 
     */
 ?>
+
+    </body>
+</html>
