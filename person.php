@@ -30,6 +30,7 @@
         $searchfield .= "<input type='text' class='input-xxlarge search-query'>\n";
         $searchfield .= "<button type='submit' class='btn btn-primary'>Search</button>\n";
         $searchfield .= "</form>\n";
+        echo $searchfield;
     }
 
     /*
