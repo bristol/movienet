@@ -1,5 +1,5 @@
 <?php require_once("config.php"); ?>
-
+<!DOCTYPE html>
 <html>
     <head>
         <title>Actors, Directors, and Producers on Movienet</title>
@@ -13,6 +13,7 @@
 
 <?php
 
+    //connect to the db
     $db = new mysqli($mnconfig["host"], $mnconfig["user"], $mnconfig["password"], $mnconfig["db"]);
     if ($db->connect_errno) {
         echo "Failed to connect to db: $db->connect_errno $db->connect_error";
@@ -20,31 +21,36 @@
     }
 
     if (array_key_exists("pid", $_GET)) {
+        //display information about a specific person
+
         $pid = $_GET["pid"];
 
+        $statement = "select * from people where pid=$pid";
+        $response = $db->query($statement);
+
+        $response->data_seek(0);
+        while ($row = $response->fetch_assoc()) {
+            echo $row;
+        }
+        
 
     } else {
-        $searchfield = "<div class='hero-unit'>\n";
-        $searchfield .= "<p>Search for actors, directors, and producers</p>\n";
-        $searchfield .= "<form class='form-search'>\n";
-        $searchfield .= "<input type='text' name='q' class='input-xxlarge' placeholder='Name of actor, director, or producer'>\n";
-        $searchfield .= "<button type='submit' class='btn btn-primary'>Search</button>\n";
-        $searchfield .= "</form>\n";
-        $searchfield .= "</div>\n";
-        echo $searchfield;
+        //search functionality
+
+        if (array_key_exists("q", $_GET)) {
+            //search results
+        } else {
+            //create the search bar
+            $searchfield = "<div class='hero-unit'>\n";
+            $searchfield .= "<p>Search for actors, directors, and producers</p>\n";
+            $searchfield .= "<form class='form-search'>\n";
+            $searchfield .= "<input type='text' name='q' class='input-xxlarge' placeholder='Name of actor, director, or producer'>\n";
+            $searchfield .= "<button type='submit' class='btn btn-primary'>Search</button>\n";
+            $searchfield .= "</form>\n";
+            $searchfield .= "</div>\n";
+            echo $searchfield;
+        }
     }
-
-    /*
-
-    $statement = "SELECT * FROM People WHERE pid=$pid";
-
-    $res = $db->query($statement);
-
-    foreach ($res as $person) {
-        echo $person;
-    }
-
-    */
 ?>
 
     </body>
