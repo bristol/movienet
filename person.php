@@ -27,7 +27,7 @@
         $searchfield = "<div class='hero-unit'>\n";
         $searchfield .= "<p>Search for actors, directors, and producers</p>\n";
         $searchfield .= "<form class='form-search'>\n";
-        $searchfield .= "<input type='text' name='person' class='input-xxlarge' placeholder='Name of actor, director, or producer'>\n";
+        $searchfield .= "<input type='text' name='q' class='input-xxlarge' placeholder='Name of actor, director, or producer'>\n";
         $searchfield .= "<button type='submit' class='btn btn-primary'>Search</button>\n";
         $searchfield .= "</form>\n";
         $searchfield .= "</div>\n";
