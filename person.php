@@ -24,7 +24,12 @@
 
 
     } else {
-        echo "<div class='mfsearchbar'>Search bar</div>";
+        $searchfield = "<div class='hero-unit'>\n";
+        $searchfield .= "<p>Search for actors, directors, and producers</p>\n";
+        $searchfield .= "<form class='form-search'>\n";
+        $searchfield .= "<input type='text' class='input-xxlarge search-query'>\n";
+        $searchfield .= "<button type='submit' class='btn btn-primary'>Search</button>\n";
+        $searchfield .= "</form>\n";
     }
 
     /*
