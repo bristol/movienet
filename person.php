@@ -8,7 +8,15 @@
         exit(1);
     }
 
-    $pid = $_GET["pid"];
+    if (array_key_exists("pid", $_GET)) {
+        $pid = $_GET["pid"];
+
+
+    } else {
+        echo "<div class='mfsearchbar'>Search bar</div>";
+    }
+
+    /*
 
     $statement = "SELECT * FROM People WHERE pid=$pid";
 
@@ -17,4 +25,6 @@
     foreach ($res as $person) {
         echo $person;
     }
+
+    */
 ?>
