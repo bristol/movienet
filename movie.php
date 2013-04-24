@@ -27,14 +27,18 @@
 
         $mid = $_GET["m"];
 
-        $statement = "select * from movie where mid=$mid";
+        $statement = "select * from movies where mid=" . $mid . ";";
         $response = $db->query($statement);
+	$response->data_seek(0);
+	$row = $response->fetch_assoc();
+            
+	$movie = "<div class='hero-unit'> \n";
+	$movie .= "<div class='page-header'> \n";
+	$movie .= "<h2>" . $row["title"] . " <small>" . $row["year"] . "</small></h2> \n";
+	$movie .= "</div> \n";
+	$movie .= "</div> \n";
 
-        $response->data_seek(0);
-        while ($row = $response->fetch_assoc()) {
-            echo $row;
-        }
-        
+	echo $movie;
 
     } else {
         //search functionality
@@ -60,8 +64,12 @@
 		$search .= "<tbody> \n";
 
 		while ($row = $response->fetch_assoc()) {
-			
+			$search .= "<tr> <td><a href='movie.php?m=" . $row["mid"] . "'>" . $row["title"] . "</a></td> <td>" . $row["year"] . "</td> <td>" . $row["runningTime"] . "</td> </tr> \n";	
 		}
+
+		$search .= "</tbody> </table> \n";
+		
+		echo $search;
         }
 }
 
