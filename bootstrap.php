@@ -1,2 +1,2 @@
-<link rel='stylesheet' href='bootstrap/css/bootstrap.min.css'>
-<script src='bootstrap/js/bootstrap.min.js'></script>
+<link rel='stylesheet' href='http://cs445.cs.umass.edu/www/cs445_3_s13/bootstrap/css/bootstrap.min.css'>
+<script src='http://cs445.cs.umass.edu/www/cs445_3_s13/bootstrap/css/bootstrap.min.css'></script>
