@@ -1,4 +1,6 @@
 <?php require_once("config.php"); ?>
+<?php include_once("cookie.php"); ?>
+
 <!DOCTYPE html>
 <html>
     <head>
