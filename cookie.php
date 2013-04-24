@@ -4,8 +4,10 @@ if (isset($_POST["deletecookie"])) {
 	
 	setcookie("username", "", time()-3600);
 	unset($_COOKIE["username"]);
+	setcookie("uid", "", time()-3600);
+	unset($_COOKIE["uid"]);
 
-} else if ($_POST["uid"] != "" && $_POST["password"] != "") {
+} else if (isset($_POST["email"]) && isset($_POST["password"]) && $_POST["email"] != "" && $_POST["password"] != "") {
     	
 
 	$db = new mysqli($mnconfig["host"], $mnconfig["user"], $mnconfig["password"], $mnconfig["db"]);
@@ -14,22 +16,26 @@ if (isset($_POST["deletecookie"])) {
         	exit(1);
     	}
     
-	$query = "select name, password from users where name='" . $_POST["email"] ."'";
+	$query = "select uid, name, password from users where email='" . $_POST["email"] ."'";
     	
-	$result = db->query($query);
-	$result->data_seek(0);
+	$result = $db->query($query);
 
     	if (!$result) {
       		echo "User not found!";
     	} else {
+		$result->data_seek(0);
 		$row = $result->fetch_assoc();
 
-        	$name = $row[0];
-        	$pass = $row[1];
+		$uid = $row['uid'];
+        	$name = $row['name'];
+        	$pass = $row['password'];
         
 		if ($pass == $_POST["password"]) {
           		setcookie("username", $name, time()+3600);
           		$_COOKIE["username"] = $name;
+			setcookie("uid", $uid, time()+3600);
+			$_COOKIE["uid"] = $uid;
+
         	}
     	}
 }
