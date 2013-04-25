@@ -1,5 +1,5 @@
 <?php require_once("config.php"); ?>
-<?php include_once("cookie.php"); ?>
+<?php include_once("login.php"); ?>
 
 <!DOCTYPE html>
 <html>
