@@ -13,6 +13,8 @@
 
         <?php include_once("header.php"); ?>
 
+	<div class='container'>
+
 <?php
 
     //connect to the db
@@ -54,6 +56,8 @@
         }
     }
 ?>
+
+	</div>
 
     </body>
 </html>
