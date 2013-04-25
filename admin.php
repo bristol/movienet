@@ -8,6 +8,13 @@
 		exit(0);
 	}
 
+	//connect to the db
+    $db = new mysqli($mnconfig["host"], $mnconfig["user"], $mnconfig["password"], $mnconfig["db"]);
+    if ($db->connect_errno) {
+        echo "Failed to connect to db: $db->connect_errno $db->connect_error";
+        exit(1);
+    }
+
 ?>
 
 <!DOCTYPE html>
@@ -21,9 +28,9 @@
     <body>
 
         <?php include_once("header.php"); ?>
-
+	<div class='hero-unit'>
 	<form method="post">
-		<textarea name='query' placeholder='Enter your sicknasty query here' rows="4" cols="100"></textarea>
+		<textarea name='query' placeholder='Enter your sicknasty query here' rows="4" cols="500"></textarea>
 		<button type='submit' class='btn btn-primary'>Run that</button>
 	</form>
 
@@ -32,31 +39,37 @@
 		if (isset($_POST["query"])) {
 			
 			$response = $db->query($_POST["query"]);
-			$response->data_seek(0);
 
 			$input = "<div class='well'> \n";
 			$input .= "<code>" . $_POST["query"] . "</code> \n";
 			$input .= "</div> \n";
 
 			$status = "<div class='well'> \n";
-			$status .= "<code>" . $db->info . "</code> \n";
+			$status .= "<code>" . $db->info . " \n";
 			if ($db->errno) {
-				$status .= "<code>" . $db->errno . ": " . $db->error . "</code> \n";
+				$status .= $db->errno . ": " . $db->error . " \n";
 			} else {
-				$status .= "<code>OK</code> \n";
+				$status .= "OK \n";
 			}
-			$status .= "</div>";
+			$status .= "</code></div>";
 
 			$output = "<div class='well'> \n";
-			$output .= "<code>";
-			while ($row = $response->fetch_array(MYSQLI_NUM)) {
-				$fields = "";
-				for ($i = 0; $i < count($row); $i++) {
-					$fields .= $row[$i] . "\t";
+			
+			if ($response) {
+				if (gettype($response) == "object") {
+					$response->data_seek(0);
+					while ($row = $response->fetch_array(MYSQLI_NUM)) {
+						$fields = "";
+						for ($i = 0; $i < count($row); $i++) {
+							$fields .= $row[$i] . "\t";
+						}
+						$output .= "<code>" . $fields . "</code><br> \n";
+					}
+				} else {
+					$output .= "<code>" . $response . "</code>";
 				}
-				$output .= $fields . "\n";
 			}
-			$output .= "</code> \n";
+			
 			$output .= "</div> \n";
 
 			echo $input;
@@ -65,6 +78,6 @@
 		}
 
 	?>			
-
+	</div>
     </body>
 </html>
