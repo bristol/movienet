@@ -28,11 +28,13 @@
     <body>
 
         <?php include_once("header.php"); ?>
-	<div class='hero-unit'>
-	<form method="post">
-		<textarea name='query' placeholder='Enter your sicknasty query here' rows="4" cols="500"></textarea>
-		<button type='submit' class='btn btn-primary'>Run that</button>
-	</form>
+
+	<div class='container'>
+		<div class='hero-unit'>
+		<form method="post">
+			<textarea name='query' placeholder='Enter your sicknasty query here' rows="4" cols="500"></textarea>
+			<button type='submit' class='btn btn-primary'>Run that</button>
+		</form>
 
 	<?php
 
@@ -77,7 +79,8 @@
 			echo $output;
 		}
 
-	?>			
+	?>
+		</div>			
 	</div>
     </body>
 </html>
