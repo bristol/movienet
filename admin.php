@@ -33,7 +33,9 @@
 		<div class='hero-unit'>
 		<form method="post">
 			<textarea name='query' placeholder='Enter your sicknasty query here' rows="4" cols="500"></textarea>
-			<button type='submit' class='btn btn-primary'>Run that</button>
+			<div class='form-actions'>
+				<button type='submit' class='btn btn-primary'>Run that</button>
+			</div>
 		</form>
 
 	<?php
