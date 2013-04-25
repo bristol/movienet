@@ -11,7 +11,13 @@
             <?php 
 		if (isset($_COOKIE["username"])) {
 			echo "<li> <a href='user.php?u=" . $_COOKIE["uid"] . "'> " . $_COOKIE["username"] . " </a> </li> ";
+
+			if ($_COOKIE["username"] == "admin") {
+				echo "<li> <a href='admin.php'>Administration</a> </li> \n";
+			}
+
 		}
+
 		?>
 
         </ul>
