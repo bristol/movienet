@@ -64,6 +64,15 @@
 	}
 	$movie["directors"] = $directors;
 
+	$statement = "select keyword from has_key H, keywords K where H.mid=" . $movie["mid"] . " and H.kid=K.kid;";
+	$response = $db->query($statement);
+	$response->data_seek(0);
+	$keywords = array();
+	while ($row = $response->fetch_assoc()) {
+		array_push($keywords, $row["keyword"]);
+	}
+	$movie["keywords"] = $keywords;	
+
         $statement = "select P.pid, P.name from produced D, people P where D.mid=" . $movie["mid"] . " and D.pid=P.pid;";
         $response = $db->query($statement);
         $response->data_seek(0);
@@ -82,6 +91,12 @@
 	}
 	$movie["actors"] = $actors;
 
+	$statement = "select count(rating), floor(avg(rating)) from rated where mid=" . $movie["mid"] . ";";
+	$response = $db->query($statement);
+	$response->data_seek(0);
+	$row = $response->fetch_assoc();
+	$movie["rating-avg"] = $row["floor(avg(rating))"];
+	$movie["rating-count"] = $row["count(rating)"];
 	
             
 	$info = "<div class='hero-unit'> \n";
@@ -91,7 +106,10 @@
 		$info .= " " . $movie["runningTime"] . " minutes";
 	}
 	$info .= "</small>";
-	$info .= "<span class='pull-right'>r/10</span>";
+	
+	if ($movie["rating-avg"]) {
+		$info .= "<span class='pull-right'><small>" . $movie["rating-count"] . " ratings</small> " . $movie["rating-avg"] . "/10</span>";
+	}
 	$info .= "</h2> \n";
 	$info .= "<p>" . join(", ", $movie["genres"]) . "</p> \n";
 	
@@ -119,6 +137,10 @@
 			$info .= "<td>" . $movie["actors"][$i]["role"] . "</td></tr> \n";
 		}
 		$info .= "</tbody></table> \n";
+	}
+
+	if ($movie["keywords"]) {
+		$info .= "<h4>Keywords</h4><p class='muted'><small>" . join(", ", $movie["keywords"]) . "</small></p> \n";
 	}
 
 	$info .= "</div> \n";
