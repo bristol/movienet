@@ -1,7 +1,15 @@
 <?php require_once("config.php"); ?>
 <?php include_once("login.php"); ?>
 
-<?php 
+<?php
+
+	$newaccountfailed = false;
+
+	//if the user logs in on this page and didn't create an account redirect them to the home page 
+	if (isset($_COOKIE["username"]) && !isset($_POST["signup-name"])) {
+		header("Location: index.php");
+		exit(0);
+	}
 
 	//connect to the db
     	$db = new mysqli($mnconfig["host"], $mnconfig["user"], $mnconfig["password"], $mnconfig["db"]);
@@ -10,6 +18,51 @@
         	exit(1);
     	}
 
+	//if the user submitted the signup form, create a user for them
+      	if (isset($_POST["signup-name"])) { 
+             	$statement = "insert into users (name, password, email";
+              	$values = "('" . $_POST["signup-name"] . "', '" . $_POST["signup-password"] . "', '" . $_POST["signup-email"] . "'";
+    
+
+                if (isset($_POST["signup-age"])) {
+               		$statement .= ", age";
+                       	$values .= ", '" . $_POST["signup-age"] . "'";
+            	}   
+
+              	if (isset($_POST["signup-gender"])) {
+                	$statement .= ", gender";
+                       	$values .= ", '" . $_POST["signup-gender"] . "'";
+              	}   
+
+               	if (isset($_POST["signup-location"])) {
+                  	$statement .= ", location";
+                      	$values .= ", '" . $_POST["signup-location"] . "'";
+             	}   
+
+               	$values .= ")";
+               	$statement .= ") values " . $values . ";";
+               	$response = $db->query($statement);
+
+		if (!$response || $db->errno) {
+			$newaccountfailed = true;
+		} else {
+			//automatically log user in on successful account creation and redirect them to home page
+
+			$statement = "select uid, name from users where email like '" . $_POST["signup-email"] . "';";
+                        $response = $db->query($statement);
+                        $response->data_seek(0);
+                        $row = $response->fetch_assoc();
+
+			setcookie("username", $row["name"], time()+3600);
+                        $_COOKIE["username"] = $row["name"];
+                        setcookie("uid", $row["uid"], time()+3600);
+                        $_COOKIE["uid"] = $row["uid"];
+
+			header("Location: index.php");
+			exit(0);
+		}
+	}
+	
 ?>
 
 <!DOCTYPE html>
@@ -26,6 +79,13 @@
 
 	<div class='container'>
 		<div class='hero-unit'>
+
+		<?php if ($newaccountfailed) { ?>
+			<div class="alert">
+  				Oh god, something went wrong. Try again.
+			</div>
+		<?php } ?>
+
 		<h2>Get started on Movienet today!</h2>
 			<form method='post' class='form-horizontal'>
 				<div class='control-group'>
@@ -81,6 +141,8 @@
 					</div>
 				</div>
 			</form>
+
+
 		</div>			
 	</div>
     </body>
