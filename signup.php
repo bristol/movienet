@@ -81,7 +81,7 @@
 		<div class='hero-unit'>
 
 		<?php if ($newaccountfailed) { ?>
-			<div class="alert">
+			<div class="alert alert-error text-center">
   				Oh god, something went wrong. Try again.
 			</div>
 		<?php } ?>
