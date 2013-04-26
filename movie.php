@@ -78,7 +78,7 @@
 	$response->data_seek(0);
 	$actors = array();
 	while ($row = $response->fetch_assoc()) {
-		array_push($directors, array("name" => $row["name"], "pid" => $row["pid"], "role" => "role"));
+		array_push($actors, array("name" => $row["name"], "pid" => $row["pid"], "role" => "role"));
 	}
 	$movie["actors"] = $actors;
 
@@ -110,6 +110,17 @@
 		}
 		$info .= "<p>Produced by " . join(", ", $links) . "</p> \n";
 	}
+	if ($movie["actors"]) {
+		$info .= "<table class='table'> \n";
+		$info .= "<thead><tr><th>Cast</th></tr></thead> \n";
+		$info .= "<tbody> \n";
+		for ($i = 0; $i < count($movie["actors"]); $i++) {
+			$info .= "<tr><td><a href='person.php?p=" . $movie["actors"][$i]["pid"] . "'>" . $movie["actors"][$i]["name"] . "</a></td>";
+			$info .= "<td>" . $movie["actors"][$i]["role"] . "</td></tr> \n";
+		}
+		$info .= "</tbody></table> \n";
+	}
+
 	$info .= "</div> \n";
 	$info .= "</div> \n";
 
