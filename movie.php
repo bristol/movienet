@@ -32,14 +32,88 @@
         $response = $db->query($statement);
 	$response->data_seek(0);
 	$row = $response->fetch_assoc();
-            
-	$movie = "<div class='hero-unit'> \n";
-	$movie .= "<div class='page-header'> \n";
-	$movie .= "<h2>" . $row["title"] . " <small>" . $row["year"] . "</small></h2> \n";
-	$movie .= "</div> \n";
-	$movie .= "</div> \n";
 
-	echo $movie;
+	$movie = array();
+	$movie["mid"] = $row["mid"];
+	$movie["title"] = $row["title"];
+	$movie["year"] = $row["year"];
+	$movie["runningTime"] = $row["runningTime"];
+
+	$statement = "select abbreviation from has_mpaa H, mpaaratings R where H.mid=" . $movie["mid"] . " and H.mpaaid=R.mpaaid;";
+	$response = $db->query($statement);
+	$response->data_seek(0);
+	$row = $response->fetch_assoc();
+
+	$movie["mpaarating"] = $row["abbreviation"];
+
+	$statement = "select genre from has_genre H, genres G where H.mid=" . $movie["mid"] . " and H.gid=G.gid;";
+	$response = $db->query($statement);
+	$response->data_seek(0);
+	$genres = array();
+	while ($row = $response->fetch_assoc()) {
+		array_push($genres, $row["genre"]);
+	}
+	$movie["genres"] = $genres;
+
+	$statement = "select P.pid, P.name from directed D, people P where D.mid=" . $movie["mid"] . " and D.pid=P.pid;";
+	$response = $db->query($statement);
+	$response->data_seek(0);
+	$directors = array();
+	while ($row = $response->fetch_assoc()) {
+		array_push($directors, array("name" => $row["name"], "pid" => $row["pid"]));
+	}
+	$movie["directors"] = $directors;
+
+        $statement = "select P.pid, P.name from produced D, people P where D.mid=" . $movie["mid"] . " and D.pid=P.pid;";
+        $response = $db->query($statement);
+        $response->data_seek(0);
+        $producers = array();
+        while ($row = $response->fetch_assoc()) {
+                array_push($producers, array("name" => $row["name"], "pid" => $row["pid"]));
+        }   
+        $movie["producers"] = $producers;
+	
+	$statement = "select P.pid, P.name from acted_in A, people P where A.mid=" . $movie["mid"] . " and A.pid=P.pid;";
+	$response = $db->query($statement);
+	$response->data_seek(0);
+	$actors = array();
+	while ($row = $response->fetch_assoc()) {
+		array_push($directors, array("name" => $row["name"], "pid" => $row["pid"], "role" => "role"));
+	}
+	$movie["actors"] = $actors;
+
+	
+            
+	$info = "<div class='hero-unit'> \n";
+	$info .= "<div class='page-header'> \n";
+	$info .= "<h2>" . $movie["title"] . " <small>(" . $movie["year"] . ") " . $movie["mpaarating"];
+	if ($movie["runningTime"]) {
+		$info .= " " . $movie["runningTime"] . " minutes";
+	}
+	$info .= "</small>";
+	$info .= "<span class='pull-right'>r/10</span>";
+	$info .= "</h2> \n";
+	$info .= "<p>" . join(", ", $movie["genres"]) . "</p> \n";
+	
+	if ($movie["directors"]) {
+		$links = array();
+		for ($i = 0; $i < count($movie["directors"]); $i++) {
+			array_push($links, "<a href='person.php?p=" . $movie["directors"][$i]["pid"] . "'>" . $movie["directors"][$i]["name"] . "</a>");
+		}
+		$info .= "<p>Directed by " . join(", ", $links) . "</p> \n";
+	}
+
+	if ($movie["producers"]) {
+		$links = array();
+		for ($i = 0; $i < count($movie["producers"]); $i++) {
+			array_push($links, "<a href='person.php?p=" . $movie["producers"][$i]["pid"] . "'>" . $movie["producers"][$i]["name"] . "</a>");
+		}
+		$info .= "<p>Produced by " . join(", ", $links) . "</p> \n";
+	}
+	$info .= "</div> \n";
+	$info .= "</div> \n";
+
+	echo $info;
 
     } else {
         //search functionality
