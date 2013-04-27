@@ -4,14 +4,11 @@
 	body {
 		padding-top: 60px;
 	}
-	
-	.rating-form {
-		padding-left: 10px;
-		display: inline;
-	}
 
 	.rating-numbers {
 		font-size: 1.5em;
+		display: block;
+		padding-bottom: 10px;
 	}
 
 	.rating-score {

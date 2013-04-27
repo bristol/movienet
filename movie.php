@@ -133,7 +133,7 @@ rating=" . $_GET["rate"] . ";";
 		$info .= "<span class='rating-score'><strong>" . $movie["rating-avg"] . "/10</strong></span></span>";
 
 		if (isset($_COOKIE["username"])) {
-                        $info .= "<form class='rating-form'><input type='hidden' name='m' value='" . $movie["mid"] . "'> \n";
+                        $info .= "<form class='rating-form pull-right'><input type='hidden' name='m' value='" . $movie["mid"] . "'> \n";
                         $info .= "<div class='input-append'><select class='input-mini' name='rate'><option>#</option> \n";
                         for ($i = 1; $i <= 10; $i++) {
                                 if ($movie["rating-user"] == $i) {
