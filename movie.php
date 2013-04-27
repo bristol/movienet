@@ -70,6 +70,8 @@ rating=" . $_GET["rate"] . ";";
 	}
 	$movie["directors"] = $directors;
 
+
+	/*
 	$statement = "select keyword from has_key H, keywords K where H.mid=" . $movie["mid"] . " and H.kid=K.kid;";
 	$response = $db->query($statement);
 	$response->data_seek(0);
@@ -78,6 +80,7 @@ rating=" . $_GET["rate"] . ";";
 		array_push($keywords, $row["keyword"]);
 	}
 	$movie["keywords"] = $keywords;	
+	*/
 
         $statement = "select P.pid, P.name from produced D, people P where D.mid=" . $movie["mid"] . " and D.pid=P.pid;";
         $response = $db->query($statement);
@@ -186,9 +189,11 @@ rating=" . $_GET["rate"] . ";";
 		$info .= "</tbody></table> \n";
 	}
 
+	/*
 	if ($movie["keywords"]) {
 		$info .= "<h4>Keywords</h4><p class='muted'><small>" . join(", ", $movie["keywords"]) . "</small></p> \n";
 	}
+	*/
 
 	$info .= "</div> \n";
 
