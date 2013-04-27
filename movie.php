@@ -122,7 +122,24 @@ rating=" . $_GET["rate"] . ";";
 
 	$info .= "</h2></div> \n";
 	$info .= "<div class='row'> \n";
-	$info .= "<div class='span4'><p>" . join(", ", $movie["genres"]) . "</p></div> \n ";
+	$info .= "<div class='span4'><p>" . join(", ", $movie["genres"]) . "</p>"; 
+	if ($movie["directors"]) {
+                $links = array();
+                for ($i = 0; $i < count($movie["directors"]); $i++) {
+                        array_push($links, "<a href='person.php?p=" . $movie["directors"][$i]["pid"] . "'>" . $movie["directors"][$i]["name"] . "</a>");
+                }
+                $info .= "<p>Directed by " . join(", ", $links) . "</p> \n";
+        }
+
+        if ($movie["producers"]) {
+                $links = array();
+                for ($i = 0; $i < count($movie["producers"]); $i++) {
+                        array_push($links, "<a href='person.php?p=" . $movie["producers"][$i]["pid"] . "'>" . $movie["producers"][$i]["name"] . "</a>");
+                }
+                $info .= "<p>Produced by " . join(", ", $links) . "</p> \n";
+        }
+
+	$info .= "</div> \n ";
 
                 $info .= "<div class='span8'><div class='pull-right'> \n";
 		
@@ -130,7 +147,16 @@ rating=" . $_GET["rate"] . ";";
 		if ($movie["rating-count"] > 1) {
 			$info .= "s";
 		}
-		$info .= "<span class='rating-score'><strong>" . $movie["rating-avg"] . "/10</strong></span></span>";
+
+		$info .= "<span class='rating-score";
+		if ($movie["rating-avg"] >= 7) {
+			$info .= " text-success";
+		} else if ($movie["rating-avg"] >= 5) {
+			$info .= " text-warning";
+		} else if ($movie["rating-avg"] >= 3) {
+			$info .= " text-error";
+		}
+		$info .= "'><strong>" . $movie["rating-avg"] . "/10</strong></span></span>";
 
 		if (isset($_COOKIE["username"])) {
                         $info .= "<form class='rating-form pull-right'><input type='hidden' name='m' value='" . $movie["mid"] . "'> \n";
@@ -149,21 +175,6 @@ rating=" . $_GET["rate"] . ";";
 
 	$info .= "</div> \n";
 	
-	if ($movie["directors"]) {
-		$links = array();
-		for ($i = 0; $i < count($movie["directors"]); $i++) {
-			array_push($links, "<a href='person.php?p=" . $movie["directors"][$i]["pid"] . "'>" . $movie["directors"][$i]["name"] . "</a>");
-		}
-		$info .= "<p>Directed by " . join(", ", $links) . "</p> \n";
-	}
-
-	if ($movie["producers"]) {
-		$links = array();
-		for ($i = 0; $i < count($movie["producers"]); $i++) {
-			array_push($links, "<a href='person.php?p=" . $movie["producers"][$i]["pid"] . "'>" . $movie["producers"][$i]["name"] . "</a>");
-		}
-		$info .= "<p>Produced by " . join(", ", $links) . "</p> \n";
-	}
 	if ($movie["actors"]) {
 		$info .= "<table class='table'> \n";
 		$info .= "<thead><tr><th>Cast</th></tr></thead> \n";
