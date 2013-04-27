@@ -122,7 +122,7 @@ rating=" . $_GET["rate"] . ";";
 
 	$info .= "</h2></div> \n";
 	$info .= "<div class='row'> \n";
-	$info .= "<div class='span4'><p>" . join(", ", $movie["genres"]) . "</p>"; 
+	$info .= "<div class='span8'><p>" . join(", ", $movie["genres"]) . "</p>"; 
 	if ($movie["directors"]) {
                 $links = array();
                 for ($i = 0; $i < count($movie["directors"]); $i++) {
@@ -141,7 +141,7 @@ rating=" . $_GET["rate"] . ";";
 
 	$info .= "</div> \n ";
 
-                $info .= "<div class='span8'><div class='pull-right'> \n";
+                $info .= "<div class='span4'><div class='pull-right'> \n";
 		
 		$info .= "<span class='rating-numbers'>" . $movie["rating-count"] . " rating";
 		if ($movie["rating-count"] > 1) {
