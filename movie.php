@@ -28,6 +28,12 @@
 
         $mid = $_GET["m"];
 
+	if (isset($_COOKIE["username"]) && isset($_GET["rate"])) {
+		$statement = "insert into rated (uid, mid, rating) values (" . $_COOKIE["uid"] . ", " . $mid . ", " . $_GET["rate"] . ") on duplicate key update
+rating=" . $_GET["rate"] . ";";
+		$response = $db->query($statement);
+	}
+
         $statement = "select * from movies where mid=" . $mid . ";";
         $response = $db->query($statement);
 	$response->data_seek(0);
@@ -91,27 +97,57 @@
 	}
 	$movie["actors"] = $actors;
 
-	$statement = "select count(rating), floor(avg(rating)) from rated where mid=" . $movie["mid"] . ";";
+	$statement = "select count(rating), round(avg(rating), 2) from rated where mid=" . $movie["mid"] . ";";
 	$response = $db->query($statement);
 	$response->data_seek(0);
 	$row = $response->fetch_assoc();
-	$movie["rating-avg"] = $row["floor(avg(rating))"];
+	$movie["rating-avg"] = $row["round(avg(rating), 2)"];
 	$movie["rating-count"] = $row["count(rating)"];
-	
+
+	if (isset($_COOKIE["username"])) {
+
+		$statement = "select rating from rated where uid=" . $_COOKIE["uid"] . " and mid=" . $movie["mid"] . ";";
+		$response = $db->query($statement);
+		$response->data_seek(0);
+		$row = $response->fetch_assoc();
+		$movie["rating-user"] = $row["rating"];	
+	}
             
-	$info = "<div class='hero-unit'> \n";
-	$info .= "<div class='page-header'> \n";
-	$info .= "<h2>" . $movie["title"] . " <small>(" . $movie["year"] . ") " . $movie["mpaarating"];
+	$info = "<div class='page-header'> \n";
+	$info .= "<h2>" . $movie["title"] . " <span class='pull-right'><small>(" . $movie["year"] . ") " . $movie["mpaarating"];
 	if ($movie["runningTime"]) {
 		$info .= " " . $movie["runningTime"] . " minutes";
 	}
-	$info .= "</small>";
-	
-	if ($movie["rating-avg"]) {
-		$info .= "<span class='pull-right'><small>" . $movie["rating-count"] . " ratings</small> " . $movie["rating-avg"] . "/10</span>";
-	}
-	$info .= "</h2> \n";
-	$info .= "<p>" . join(", ", $movie["genres"]) . "</p> \n";
+	$info .= "</small></span>";
+
+	$info .= "</h2></div> \n";
+	$info .= "<div class='row'> \n";
+	$info .= "<div class='span4'><p>" . join(", ", $movie["genres"]) . "</p></div> \n ";
+
+                $info .= "<div class='span8'><div class='pull-right'> \n";
+		
+		$info .= "<span class='rating-numbers'>" . $movie["rating-count"] . " rating";
+		if ($movie["rating-count"] > 1) {
+			$info .= "s";
+		}
+		$info .= "<span class='rating-score'><strong>" . $movie["rating-avg"] . "/10</strong></span></span>";
+
+		if (isset($_COOKIE["username"])) {
+                        $info .= "<form class='rating-form'><input type='hidden' name='m' value='" . $movie["mid"] . "'> \n";
+                        $info .= "<div class='input-append'><select class='input-mini' name='rate'><option>#</option> \n";
+                        for ($i = 1; $i <= 10; $i++) {
+                                if ($movie["rating-user"] == $i) {
+                                       $info .= "<option value='$i' selected>$i</option> \n";
+                                } else {
+                                        $info .= "<option value='$i'>$i</option> \n";
+                                }
+                        }
+                        $info .= "</select><button type='submit' class='btn'>Rate</button></div></form> \n";
+                }
+
+		$info .= "</span></div></div> \n";
+
+	$info .= "</div> \n";
 	
 	if ($movie["directors"]) {
 		$links = array();
@@ -143,7 +179,6 @@
 		$info .= "<h4>Keywords</h4><p class='muted'><small>" . join(", ", $movie["keywords"]) . "</small></p> \n";
 	}
 
-	$info .= "</div> \n";
 	$info .= "</div> \n";
 
 	echo $info;
