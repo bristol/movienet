@@ -117,9 +117,9 @@ rating=" . $_GET["rate"] . ";";
 	}
             
 	$info = "<div class='page-header'> \n";
-	$info .= "<h2>" . $movie["title"] . " <span class='pull-right'><small>(" . $movie["year"] . ") " . $movie["mpaarating"];
+	$info .= "<h2>" . $movie["title"] . " <small>(" . $movie["year"] . ")</small><span class='pull-right'><small>Rated " . $movie["mpaarating"];
 	if ($movie["runningTime"]) {
-		$info .= " " . $movie["runningTime"] . " minutes";
+		$info .= " &#8213; " . $movie["runningTime"] . " minutes";
 	}
 	$info .= "</small></span>";
 
