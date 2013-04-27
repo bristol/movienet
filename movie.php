@@ -184,7 +184,7 @@ rating=" . $_GET["rate"] . ";";
 		$info .= "<tbody> \n";
 		for ($i = 0; $i < count($movie["actors"]); $i++) {
 			$info .= "<tr><td><a href='person.php?p=" . $movie["actors"][$i]["pid"] . "'>" . $movie["actors"][$i]["name"] . "</a></td>";
-			$info .= "<td>" . $movie["actors"][$i]["role"] . "</td></tr> \n";
+			$info .= "<td><p class='text-right'>" . $movie["actors"][$i]["role"] . "</p></td></tr> \n";
 		}
 		$info .= "</tbody></table> \n";
 	}
