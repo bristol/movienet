@@ -125,7 +125,10 @@ rating=" . $_GET["rate"] . ";";
 
 	$info .= "</h2></div> \n";
 	$info .= "<div class='row'> \n";
-	$info .= "<div class='span8'><p>" . join(", ", $movie["genres"]) . "</p>"; 
+	$info .= "<div class='span8'>";
+	if ($movie["genres"]) {
+		$info .= "<p>" . join(", ", $movie["genres"]) . "</p> \n";
+	} 
 	if ($movie["directors"]) {
                 $links = array();
                 for ($i = 0; $i < count($movie["directors"]); $i++) {
@@ -159,7 +162,7 @@ rating=" . $_GET["rate"] . ";";
 		} else if ($movie["rating-avg"] >= 3) {
 			$info .= " text-error";
 		}
-		$info .= "'><strong>" . $movie["rating-avg"] . "/10</strong></span></span>";
+		$info .= "'><strong>" . $movie["rating-avg"] . "</strong></span></span>";
 
 		if (isset($_COOKIE["username"])) {
                         $info .= "<form class='rating-form pull-right'><input type='hidden' name='m' value='" . $movie["mid"] . "'> \n";
