@@ -215,15 +215,53 @@ rating=" . $_GET["rate"] . ";";
 
     } else {
         //search functionality
+		?>
 
-	    $searchfield = "<div class='hero-unit'>\n";
-            $searchfield .= "<p>Search for movies on Movienet</p>\n";
-            $searchfield .= "<form class='form-search'>\n";
-            $searchfield .= "<input type='text' name='q' class='input-xxlarge' placeholder='Name of movie'>\n";
-            $searchfield .= "<button type='submit' class='btn btn-primary'>Search</button>\n";
-            $searchfield .= "</form>\n";
-            $searchfield .= "</div>\n";
-            echo $searchfield;
+	<div class='hero-unit'>
+		<p>Search for movies on Movienet</p>
+		<div id='search-simple'>
+			<form class='form-search'>
+				<input type='text' name='q' class='input-xxlarge' placeholder='Name of movie'>
+				<button type='submit' class='btn btn-primary'>Search</button>
+			</form>
+		</div>
+		<div id='search-advanced'>
+			<form class='form-horizontal'>
+				<input type='hidden' name='advanced' value='true'>
+				<div class='control-group'>
+					<div class='controls'>
+						<select id='search-field-select'>
+							<option value='default' selected>Add a search field</option>
+							<option value='search-title-group'>Title</option>
+							<option value='search-year-group'>Year</option>
+						</select>
+					</div>
+				</div>
+				<div class='control-group' id='search-title-group'>
+					<label class='control-label' for='search-title'>Title</label>
+					<div class='controls'>
+						<input type='text' id='search-title' name='search-title' placeholder='The Godfather'>
+						<a class='btn btn-danger btn-small search-hide'>&times;</a>
+					</div>
+				</div>
+				<div class='control-group' id='search-year-group'>
+					<label class='control-label' for='search-year'>Year</label>
+					<div class='controls'>
+						<input type='range' id='search-year' name='search-year'>
+						<a class='btn btn-danger btn-small search-hide'>&times;</a>
+					</div>
+				</div>
+				<div class='control-group'>
+					<div class='controls'>
+						<button type='submit' class='btn btn-primary'>Search</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<a class='btn' id='search-toggle'>Advanced Search</a>
+	</div>
+
+	<?php
 
         if (array_key_exists("q", $_GET)) {
             $statement = "select * from movies where title like '%" . $_GET["q"] . "%';";
@@ -262,5 +300,6 @@ rating=" . $_GET["rate"] . ";";
 	?>
 		</div>
 
+	<?php include_once("jquery.php"); ?>
     </body>
 </html>
