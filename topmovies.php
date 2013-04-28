@@ -42,7 +42,7 @@
 		<h1>Top Movies</h1>
 		<div class='row'>
 			<div class='span10'>
-				<p>Showing the top <?php echo $k ?> movies on Movienet. I guess you could say that means they're pretty good or something but
+				<p>Showing the top <?php echo $k ?> movies on Movienet that are rated more than 100 times. I guess you could say that means they're pretty good or something but
 that's just what I hear. I mean obviously Dude Where's My Car was the best movie ever made but whatever.</p>
 			</div>
 			<div class='span2'>
