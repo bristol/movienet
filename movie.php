@@ -245,7 +245,11 @@ rating=" . $_GET["rate"] . ";";
 			$search .= "<tbody> \n";
 
 			while ($row = $response->fetch_assoc()) {
-				$search .= "<tr> <td><a href='movie.php?m=" . $row["mid"] . "'>" . $row["title"] . "</a></td> <td>" . $row["year"] . "</td> <td>" . $row["runningTime"] . "</td> </tr> \n";	
+				$search .= "<tr> <td><a href='movie.php?m=" . $row["mid"] . "'>" . $row["title"] . "</a></td> <td>" . $row["year"] . "</td><td>";
+ 				if ($row["runningTime"]) {
+					$search .= $row["runningTime"] . " min";
+				}
+				"</td> </tr> \n";
 			}
 
 			$search .= "</tbody> </table> \n";
