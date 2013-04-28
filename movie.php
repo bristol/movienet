@@ -230,17 +230,26 @@ rating=" . $_GET["rate"] . ";";
 		$response = $db->query($statement);
 		$response->data_seek(0);
 
-		$search = "<div class='search-results'> \n";
-		$search .= "<h2>Search results for " . $_GET["q"] . "</h2> \n";
-		$search .= "<table class='table table-striped table-hover'> \n";
-		$search .= "<thead> <tr> <th>Title</th> <th>Year</th> <th>Running time</th> </tr> </thead> \n";
-		$search .= "<tbody> \n";
+		$search = "";
 
-		while ($row = $response->fetch_assoc()) {
-			$search .= "<tr> <td><a href='movie.php?m=" . $row["mid"] . "'>" . $row["title"] . "</a></td> <td>" . $row["year"] . "</td> <td>" . $row["runningTime"] . "</td> </tr> \n";	
+		if ($response->num_rows == 0) {
+			$search .= "<div class='text-center'> \n";
+			$search .= "<h2>No results found!</h2> \n";
+			$search .= "<p>The search term you are looking for is in another castle.</p> \n";
+			$search .= "</div> \n";
+		} else {
+			$search .= "<div class='search-results'> \n";
+			$search .= "<h2>Search results for " . $_GET["q"] . "</h2> \n";
+			$search .= "<table class='table table-striped table-hover'> \n";
+			$search .= "<thead> <tr> <th>Title</th> <th>Year</th> <th>Running time</th> </tr> </thead> \n";
+			$search .= "<tbody> \n";
+
+			while ($row = $response->fetch_assoc()) {
+				$search .= "<tr> <td><a href='movie.php?m=" . $row["mid"] . "'>" . $row["title"] . "</a></td> <td>" . $row["year"] . "</td> <td>" . $row["runningTime"] . "</td> </tr> \n";	
+			}
+
+			$search .= "</tbody> </table> \n";
 		}
-
-		$search .= "</tbody> </table> \n";
 		
 		echo $search;
         }
