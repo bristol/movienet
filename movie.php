@@ -117,11 +117,18 @@ rating=" . $_GET["rate"] . ";";
 	}
             
 	$info = "<div class='page-header'> \n";
-	$info .= "<h2>" . $movie["title"] . " <small>(" . $movie["year"] . ")</small><span class='pull-right'><small>Rated " . $movie["mpaarating"];
-	if ($movie["runningTime"]) {
-		$info .= " &#8213; " . $movie["runningTime"] . " minutes";
+	$info .= "<h2>" . $movie["title"] . " <small>(" . $movie["year"] . ")</small><span class='pull-right'> \n";
+	if ($movie["mpaarating"]) {
+		$info .= "<small>Rated " . $movie["mpaarating"] . "</small> \n";
 	}
-	$info .= "</small></span>";
+	if ($movie["runningTime"]) {
+		$info .= "<small>";
+		if ($movie["mpaarating"]) {
+			$info .= " &#8213; ";
+		}
+		$info .= $movie["runningTime"] . " minutes</small>";
+	}
+	$info .= "</span> \n";
 
 	$info .= "</h2></div> \n";
 	$info .= "<div class='row'> \n";
@@ -148,7 +155,9 @@ rating=" . $_GET["rate"] . ";";
 	$info .= "</div> \n ";
 
                 $info .= "<div class='span4'><div class='pull-right'> \n";
-		
+	
+		if ($movie["rating-count"]) {
+	
 		$info .= "<span class='rating-numbers'>" . $movie["rating-count"] . " rating";
 		if ($movie["rating-count"] > 1) {
 			$info .= "s";
@@ -163,6 +172,8 @@ rating=" . $_GET["rate"] . ";";
 			$info .= " text-error";
 		}
 		$info .= "'><strong>" . $movie["rating-avg"] . "</strong></span></span>";
+
+		}
 
 		if (isset($_COOKIE["username"])) {
                         $info .= "<form class='rating-form pull-right'><input type='hidden' name='m' value='" . $movie["mid"] . "'> \n";
