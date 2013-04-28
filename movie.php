@@ -91,12 +91,12 @@ rating=" . $_GET["rate"] . ";";
         }   
         $movie["producers"] = $producers;
 	
-	$statement = "select P.pid, P.name from acted_in A, people P where A.mid=" . $movie["mid"] . " and A.pid=P.pid;";
+	$statement = "select P.pid, P.name, A.role from acted_in A, people P where A.mid=" . $movie["mid"] . " and A.pid=P.pid;";
 	$response = $db->query($statement);
 	$response->data_seek(0);
 	$actors = array();
 	while ($row = $response->fetch_assoc()) {
-		array_push($actors, array("name" => $row["name"], "pid" => $row["pid"], "role" => "role"));
+		array_push($actors, array("name" => $row["name"], "pid" => $row["pid"], "role" => $row["role"]));
 	}
 	$movie["actors"] = $actors;
 
