@@ -234,6 +234,9 @@ rating=" . $_GET["rate"] . ";";
 							<option value='default' selected>Add a search field</option>
 							<option value='search-title-group'>Title</option>
 							<option value='search-year-group'>Year</option>
+							<option value='search-mpaarating-group'>MPAA Rating</option>
+							<option value='search-avgrating-group'>Average Rating</option>
+							<option value='search-numrating-group'>Number of Ratings</option>
 						</select>
 					</div>
 				</div>
@@ -245,9 +248,36 @@ rating=" . $_GET["rate"] . ";";
 					</div>
 				</div>
 				<div class='control-group' id='search-year-group'>
-					<label class='control-label' for='search-year'>Year</label>
+					<label class='control-label' for='search-year-start'>Year (start, end)</label>
 					<div class='controls'>
-						<input type='range' id='search-year' name='search-year'>
+						<input type='number' class='input-small' id='search-year-start' name='search-year-start' placeholder='1970'>
+						<input type='number' class='input-small' id='search-year-end' name='search-year-end' placeholder='2001'>
+						<a class='btn btn-danger btn-small search-hide'>&times;</a>
+					</div>
+				</div>
+				<div class='control-group search-group-hidden' id='search-mpaarating-group'>
+					<label class='control-label' for='search-mpaarating'>MPAA Rating</label>
+					<div class='controls'>
+						<select name='search-mpaarating' id='search-mpaarating'>
+							<option selected>Select a rating</option>
+							<option value='any'>Any</option>
+							<option value='nr'>Not Rated</option>
+							<option value='g'>G</option>
+							<option value='pg'>PG</option>
+							<option value='pg13'>PG-13</option>
+							<option value='r'>R</option>
+							<option value='nc17'>NC-17</option>
+						</select>
+						<a class='btn btn-danger btn-small search-hide'>&times;</a>
+					</div>
+				</div>
+				<div class='control-group search-group-hidden' id='search-avgrating-group'>
+					<label class='control-label' for='search-avgrating-low'>Average Rating (low, high)</label>
+					<div class='controls'>
+						<input type='number' class='input-mini' min='1' max='10' step='any' id='search-avgrating-low' name='search-avgrating-low'
+placeholder='2.5'>
+						<input type='number' class='input-mini' min='1' max='10' step='any' id='search-avgrating-high' name='search-avgrating-high'
+placeholder='9.75'>
 						<a class='btn btn-danger btn-small search-hide'>&times;</a>
 					</div>
 				</div>
