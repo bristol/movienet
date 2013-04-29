@@ -243,30 +243,29 @@ rating=" . $_GET["rate"] . ";";
 				<div class='control-group' id='search-title-group'>
 					<label class='control-label' for='search-title'>Title</label>
 					<div class='controls'>
-						<input type='text' id='search-title' name='search-title' placeholder='The Godfather'>
+						<input type='text' class='advanced-input' id='search-title' name='search-title' placeholder='The Godfather'>
 						<a class='btn btn-danger btn-small search-hide'>&times;</a>
 					</div>
 				</div>
 				<div class='control-group' id='search-year-group'>
 					<label class='control-label' for='search-year-start'>Year (start, end)</label>
 					<div class='controls'>
-						<input type='number' class='input-small' id='search-year-start' name='search-year-start' placeholder='1970'>
-						<input type='number' class='input-small' id='search-year-end' name='search-year-end' placeholder='2001'>
+						<input type='number' class='input-small advanced-input' id='search-year-start' name='search-year-start' placeholder='1970'>
+						<input type='number' class='input-small advanced-input' id='search-year-end' name='search-year-end' placeholder='2001'>
 						<a class='btn btn-danger btn-small search-hide'>&times;</a>
 					</div>
 				</div>
 				<div class='control-group search-group-hidden' id='search-mpaarating-group'>
 					<label class='control-label' for='search-mpaarating'>MPAA Rating</label>
 					<div class='controls'>
-						<select name='search-mpaarating' id='search-mpaarating'>
-							<option selected>Select a rating</option>
+						<select class ='input-medium advanced-input' name='search-mpaarating' id='search-mpaarating'>
+							<option value='' selected>Select a rating</option>
 							<option value='any'>Any</option>
-							<option value='nr'>Not Rated</option>
-							<option value='g'>G</option>
-							<option value='pg'>PG</option>
-							<option value='pg13'>PG-13</option>
-							<option value='r'>R</option>
-							<option value='nc17'>NC-17</option>
+							<option value='G'>G</option>
+							<option value='PG'>PG</option>
+							<option value='PG-13'>PG-13</option>
+							<option value='R'>R</option>
+							<option value='NC-17'>NC-17</option>
 						</select>
 						<a class='btn btn-danger btn-small search-hide'>&times;</a>
 					</div>
@@ -274,10 +273,20 @@ rating=" . $_GET["rate"] . ";";
 				<div class='control-group search-group-hidden' id='search-avgrating-group'>
 					<label class='control-label' for='search-avgrating-low'>Average Rating (low, high)</label>
 					<div class='controls'>
-						<input type='number' class='input-mini' min='1' max='10' step='any' id='search-avgrating-low' name='search-avgrating-low'
+						<input type='number' class='input-mini advanced-input' min='1' max='10' step='any' id='search-avgrating-low' name='search-avgrating-low'
 placeholder='2.5'>
-						<input type='number' class='input-mini' min='1' max='10' step='any' id='search-avgrating-high' name='search-avgrating-high'
+						<input type='number' class='input-mini advanced-input' min='1' max='10' step='any' id='search-avgrating-high' name='search-avgrating-high'
 placeholder='9.75'>
+						<a class='btn btn-danger btn-small search-hide'>&times;</a>
+					</div>
+				</div>
+				<div class='control-group search-group-hidden' id='search-numrating-group'>
+					<label class='control-label' for='search-numrating-low'>Number of Ratings (low, high)</label>
+					<div class='controls'>
+						<input type='number' class='input-small advanced-input' min='0' step='1' id='search-numrating-low' name='search-numrating-low'
+placeholder='5'>
+						<input type='number' class='input-small advanced-input' min='0' step='1' id='search-numrating-high' name='search-numrating-high'
+placeholder='5000'>
 						<a class='btn btn-danger btn-small search-hide'>&times;</a>
 					</div>
 				</div>
@@ -325,6 +334,118 @@ placeholder='9.75'>
 		
 		echo $search;
         }
+
+	if (isset($_GET["advanced"])) {
+		$select = array();
+		$from = array();
+		$where = array();
+		$having = array();
+		$orderby = array();
+
+		array_push($select, "M.mid", "M.title", "M.year", "M.runningTime");
+		array_push($from, "movies M");
+
+		if ($_GET["search-title"]) {
+			array_push($where, "M.title like '%" . $_GET["search-title"] . "%'");
+		}
+		
+		if ($_GET["search-year-start"]) {
+			array_push($where, "M.year>=" . $_GET["search-year-start"]);
+		}
+
+		if ($_GET["search-year-end"]) {
+			array_push($where, "M.year<=" . $_GET["search-year-end"]);
+		} 
+
+		if ($_GET["search-mpaarating"]) {
+			array_push($select, "MA.abbreviation");
+			array_push($from, "has_mpaa HA", "mpaaratings MA");
+			array_push($where, "M.mid=HA.mid", "HA.mpaaid=MA.mpaaid");
+			if ($_GET["search-mpaarating"] != "any") {
+				array_push($where, "MA.abbreviation like '" . $_GET["search-mpaarating"] . "'");
+			}
+		}
+
+		if ($_GET["search-numrating-low"] || $_GET["search-numrating-high"]) {
+			array_push($select, "count(R.rating)");
+			array_push($from, "rated R");
+			array_push($where, "M.mid=R.mid");
+
+			if ($_GET["search-numrating-low"]) {
+				array_push($having, "count(R.rating)>=" . $_GET["search-numrating-low"]);
+			}
+
+			if ($_GET["search-numrating-high"]) {
+				array_push($having, "count(R.rating)<=" . $_GET["search-numrating-high"]);
+			}
+		}
+
+		$query = "select " . join(", ", $select) . " from " . join(", ", $from) . " where " . join(" and ", $where);
+		if ($having) {
+			$query .= " having " . join(" and ", $having);
+		}
+		if ($orderby) {
+			$query .= " order by " . join(", ", $orderby);
+		}
+		$query .= ";";
+		echo $query;
+	
+		$response = $db->query($query);
+
+		$search = "";
+
+		if ($response->num_rows == 0) {
+                        $search .= "<div class='text-center'> \n";
+                        $search .= "<h2>No results found!</h2> \n";
+                        $search .= "<p>Try using less search terms</p> \n";
+                        $search .= "</div> \n";
+                } else {
+
+			$search .= "<div class='search-results'> \n";
+			$search .= "<h4>Search results for ";
+			
+			$terms = array();
+			if ($_GET["search-title"]) {
+				array_push($terms, "title '" . $_GET["search-title"] . "'");
+			}
+			if ($_GET["search-mpaarating"]) {
+				array_push($terms, "MPAA rating '" . $_GET["search-mpaarating"] . "'");
+			}
+			if ($_GET["search-year-start"] && $_GET["search-year-end"]) {
+				array_push($terms, "year between " . $_GET["search-year-start"] . " and " . $_GET["search-year-end"]);
+			} else if ($_GET["search-year-start"]) {
+				array_push($terms, "year after " . $_GET["search-year-start"]);
+			} else if ($_GET["search-year-end"]) {
+				array_push($terms, "year before " . $_GET["search-year-end"]);
+			}
+			if ($_GET["search-avgrating-low"] && $_GET["search-avgrating-high"]) {
+				array_push($terms, "average rating between " . $_GET["search-avgrating-low"] . " and " . $_GET["search-avgrating-high"]);
+			} else if ($_GET["search-avgrating-low"]) {
+				array_push($terms, "average rating higher than " . $_GET["search-avgrating-low"]);
+			} else if ($_GET["search-avgrating-high"]) {
+				array_push($terms, "average rating lower than " . $_GET["search-avgrating-high"]);
+			}
+			if ($_GET["search-numrating-low"] && $_GET["search-numrating-high"]) {
+                                array_push($terms, "between " . $_GET["search-numrating-low"] . " and " . $_GET["search-numrating-high"] . " ratings");
+                        } else if ($_GET["search-numrating-low"]) {
+                                array_push($terms, "more than " . $_GET["search-numrating-low"] . " ratings");
+                        } else if ($_GET["search-numrating-high"]) {
+                                array_push($terms, "less than " . $_GET["search-numrating-high"] . " ratings");
+                        }
+
+
+			$search .= join(" and ", $terms);
+			$search .= "</h4> \n";
+
+			$search .= "</div> \n";
+
+			$response->data_seek(0);
+			while ($row = $response->fetch_assoc()) {
+                	}
+		}
+
+		echo $search;
+	}
 }
 
 	?>
