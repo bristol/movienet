@@ -7,4 +7,8 @@
 		$("#search-simple").toggle(500);
 		$("#search-advanced").toggle(500);
 	});
+	$("#search-field-select").change(function() {
+		$("#" + $(this).val()).show(500);
+		$(this).val("default");
+	});
 </script>
