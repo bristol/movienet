@@ -19,4 +19,8 @@
 	#search-advanced {
 		display: none;
 	}
+
+	.search-group-hidden {
+		display: none;
+	}
 </style>
