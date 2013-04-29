@@ -2,6 +2,7 @@
 <script>
 	$(".search-hide").click(function() {
 		$(this).parent().parent().hide(300);
+		$(this).siblings(".advanced-input").val("");
 	});
 	$("#search-toggle").click(function() {
 		$("#search-simple").toggle(300);
