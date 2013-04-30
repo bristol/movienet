@@ -365,10 +365,6 @@ placeholder='5000'>
 		$select = array();
 		$from = array();
 		$where = array();
-		$having = array();
-		$groupby = array();
-		$orderby = array();
-		$limit = 0;
 
 		array_push($select, "M.mid", "M.title", "M.year", "M.runningTime");
 		array_push($from, "movies M");
@@ -407,48 +403,29 @@ placeholder='5000'>
 		}
 
 		if ($_GET["search-avgrating-low"] || $_GET["search-avgrating-high"]) {
-			array_push($select, "round(avg(R.rating), 2)");
-			array_push($from, "rated R");
-			array_push($where, "M.mid=R.mid");
-			array_push($groupby, "mid");
+			array_push($select, "M.avgRating");
 		
 			if ($_GET["search-avgrating-low"]) {
-				array_push($having, "round(avg(R.rating), 2)>=" . $_GET["search-avgrating-low"]);
+				array_push($where, "M.avgRating>=" . $_GET["search-avgrating-low"]);
 			}
 			if ($_GET["search-avgrating-high"]) {
-				array_push($having, "round(avg(R.rating), 2)<=" . $_GET["search-avgrating-high"]);
+				array_push($where, "M.avgRating<=" . $_GET["search-avgrating-high"]);
 			}
 		}
 
 		if ($_GET["search-numrating-low"] || $_GET["search-numrating-high"]) {
-			array_push($select, "count(R.rating)");
+			array_push($select, "M.countRatings");
 			
-			if (!in_array("rated R", $from)) {
-				array_push($from, "rated R");
-				array_push($where, "M.mid=R.mid");
-				array_push($groupby, "mid");
-			}
-
 			if ($_GET["search-numrating-low"]) {
-				array_push($having, "count(R.rating)>=" . $_GET["search-numrating-low"]);
+				array_push($where, "M.countRatings>=" . $_GET["search-numrating-low"]);
 			}
 
 			if ($_GET["search-numrating-high"]) {
-				array_push($having, "count(R.rating)<=" . $_GET["search-numrating-high"]);
+				array_push($where, "M.countRatings<=" . $_GET["search-numrating-high"]);
 			}
 		}
 
-		$query = "select " . join(", ", $select) . " from " . join(", ", $from) . " where " . join(" and ", $where);
-		if ($groupby) {
-			$query .= " group by " . join(", ", $groupby);
-		}
-		if ($having) {
-			$query .= " having " . join(" and ", $having);
-		}
-		if ($orderby) {
-			$query .= " order by " . join(", ", $orderby);
-		}
-		$query .= ";";
+		$query = "select " . join(", ", $select) . " from " . join(", ", $from) . " where " . join(" and ", $where) . ";";
 		//echo $query;
 	
 		$response = $db->query($query);
@@ -491,7 +468,7 @@ placeholder='5000'>
 			}
 
 			if ($_GET["search-avgrating-low"] || $_GET["search-avgrating-high"]) {
-				array_push($includes, array("label" => "Average Rating", "field" => "round(avg(R.rating), 2)"));
+				array_push($includes, array("label" => "Average Rating", "field" => "avgRating"));
 			}
 			if ($_GET["search-avgrating-low"] && $_GET["search-avgrating-high"]) {
 				array_push($terms, "average rating between " . $_GET["search-avgrating-low"] . " and " . $_GET["search-avgrating-high"]);
@@ -502,7 +479,7 @@ placeholder='5000'>
 			}
 
 			if ($_GET["search-numrating-low"] || $_GET["search-numrating-high"]) {
-				array_push($includes, array("label" => "Number of ratings", "field" => "count(R.rating)"));
+				array_push($includes, array("label" => "Number of ratings", "field" => "countRatings"));
 			}
 			if ($_GET["search-numrating-low"] && $_GET["search-numrating-high"]) {
                                 array_push($terms, "between " . $_GET["search-numrating-low"] . " and " . $_GET["search-numrating-high"] . " ratings");
