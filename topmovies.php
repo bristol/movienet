@@ -15,8 +15,7 @@
 		$k = $_GET["k"];
 	}
 
-	$statement = "select M.mid, M.title, M.avgRating from movies M, rated R where M.mid=R.mid group by mid having count(R.rating) > 100 order by avgRating
-desc limit $k;";
+	$statement = "select mid, title, avgRating from movies where countRatings >= 100 order by avgRating desc limit $k;";
 	$response = $db->query($statement);
 	$response->data_seek(0);
 	$movies = array();
