@@ -29,8 +29,34 @@
         $mid = $_GET["m"];
 
 	if (isset($_COOKIE["username"]) && isset($_GET["rate"])) {
+
+		$statement = "select * from rated where mid=$mid and uid=" . $_COOKIE["uid"] . ";";
+		$response = $db->query($statement);
+		$oldrating = 0;
+		if ($response && $response->num_rows > 0) {
+			$response->data_seek(0);
+			$row = $response->fetch_assoc();
+			$oldrating = $row["rating"];
+		}
+
+		$statement = "select * from movies where mid=" . $mid . ";";
+		$response = $db->query($statement);
+		$response->data_seek(0);
+		$row = $response->fetch_assoc();
+
+		if ($oldrating) {
+			$newcount = $row["countRatings"];
+			$newavg = round(((($row["avgRating"] * $row["countRatings"]) - $oldrating + $_GET["rate"]) / $newcount), 2);
+		} else {
+			$newcount = $row["countRatings"] + 1;
+			$newavg = round(((($row["avgRating"] * $row["countRatings"]) + $_GET["rate"]) / $newcount), 2);
+		}
+
 		$statement = "insert into rated (uid, mid, rating) values (" . $_COOKIE["uid"] . ", " . $mid . ", " . $_GET["rate"] . ") on duplicate key update
 rating=" . $_GET["rate"] . ";";
+		$response = $db->query($statement);
+
+		$statement = "update movies set avgRating=$newavg, countRatings=$newcount where mid=$mid;";
 		$response = $db->query($statement);
 	}
 
