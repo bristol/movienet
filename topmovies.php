@@ -15,13 +15,13 @@
 		$k = $_GET["k"];
 	}
 
-	$statement = "select M.mid, M.title, round(avg(R.rating), 2) from movies M, rated R where M.mid=R.mid group by mid having count(R.rating) > 100 order by
-`round(avg(R.rating), 2)` desc limit $k;";
+	$statement = "select M.mid, M.title, M.avgRating from movies M, rated R where M.mid=R.mid group by mid having count(R.rating) > 100 order by avgRating
+desc limit $k;";
 	$response = $db->query($statement);
 	$response->data_seek(0);
 	$movies = array();
 	while ($row = $response->fetch_assoc()) {
-		array_push($movies, array("mid" => $row["mid"], "title" => $row["title"], "rating" => $row["round(avg(R.rating), 2)"]));
+		array_push($movies, array("mid" => $row["mid"], "title" => $row["title"], "rating" => $row["avgRating"]));
 	}
 
 ?>
