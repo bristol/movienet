@@ -68,7 +68,9 @@ $_COOKIE["uid"] . " and uidFriended=" . $_GET["u"] . ");";
 		$response->data_seek(0);
 		$row = $response->fetch_assoc();
 		?>
-
+		<div class='text-center'>
+			<strong><a href='user.php'>Search for other friends on Movienet</a></strong>
+		</div>
 		<h2><?php echo $row["name"]; 
 					if ($friender && $friended) {
 						echo "<span class='label label-info'>Is your friend</span> \n";
