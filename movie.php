@@ -449,13 +449,13 @@ placeholder='5000'>
 			$query .= " order by " . join(", ", $orderby);
 		}
 		$query .= ";";
-		echo $query;
+		//echo $query;
 	
 		$response = $db->query($query);
 
 		$search = "";
 
-		if ($response->num_rows == 0) {
+		if (!$response || $response->num_rows == 0) {
                         $search .= "<div class='text-center'> \n";
                         $search .= "<h2>No results found!</h2> \n";
                         $search .= "<p>Try using less search terms</p> \n";
