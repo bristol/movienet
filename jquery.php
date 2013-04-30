@@ -3,6 +3,7 @@
 	$(".search-hide").click(function() {
 		$(this).parent().parent().hide(300);
 		$(this).siblings(".advanced-input").val("");
+		$(this).siblings().find(".advanced-input").prop("checked", false);
 	});
 	$("#search-toggle").click(function() {
 		$("#search-simple").toggle(300);
