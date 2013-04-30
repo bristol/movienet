@@ -69,17 +69,16 @@ $_COOKIE["uid"] . " and uidFriended=" . $_GET["u"] . ");";
 		$row = $response->fetch_assoc();
 		?>
 
-		<h2>Movienet user <?php echo $row["name"]; 
+		<h2><?php echo $row["name"]; 
 					if ($friender && $friended) {
 						echo "<span class='label label-info'>Is your friend</span> \n";
 					} else if ($friended) {
 						echo "<a href='user.php?u=" . $_COOKIE["uid"] . "'><span class='label label-info'>Requested you as a
 friend</span></a>";
 					}?></h2>
-		<div class='row'
-			<div class='span4'>
+		<div class='row'>
+			<div class='span6'>
 				<dl class='dl-horizontal'>
-					<dt>Name</dt><dd><?php echo $row["name"]; ?></dd>
 					<dt>Email</dt><dd><?php echo $row["email"]; ?></dd>
 					<?php
 						if ($row["age"]) {
@@ -109,6 +108,15 @@ friend</span></a>";
 							?>
 								<button type='button' disabled>Friend Request Sent</button>
 							<?php
+						} else if ($friended) {
+							?>
+							<form>  
+                                                            <input type='hidden' name='u' value='<?php echo $_GET["u"]; ?>'>
+                                                                <input type='hidden' name='friend' value='true'>
+                                                                <button type='submit' class='btn btn-primary'>Accept Request</button>
+                                                       	</form>
+							<?php
+
 						} else {
 							?>
 							<form>
@@ -121,7 +129,86 @@ friend</span></a>";
 					}
 				?>
 			</div>
-			<div class='span8'>
+			<div class='span6'>
+				<?php
+				if (isset($_COOKIE["uid"]) && $_COOKIE["uid"] == $_GET["u"]) {
+
+					$friended_users = array();
+					$friender_users = array();
+					$friends = array();
+					$requests = array();
+
+					//people who have friended you
+					$statement1 = "select U.uid, U.name, U.email from users U, friends F where U.uid=F.uidFriender and F.uidFriended=" .
+$_COOKIE["uid"]  . ";";
+					$response1 = $db->query($statement1);
+
+					//people who you have friended
+					$statement2 = "select U.uid, U.name, U.email from users U, friends F where U.uid=F.uidFriended and F.uidFriender=" .
+$_COOKIE["uid"] . ";";
+					$response2 = $db->query($statement2);
+
+					if ($response1 && $response1->num_rows > 0 && $response2 && $response2->num_rows > 0) {
+						$response1->data_seek(0);
+						while ($row = $response1->fetch_assoc()) {
+							$friender_users[$row["uid"]] = array("uid" => $row["uid"], "name" => $row["name"], "email" => $row["email"]);
+						}
+						$response2->data_seek(0);
+                                                while ($row = $response2->fetch_assoc()) {
+                                                        $friended_users[$row["uid"]] = array("uid" => $row["uid"], "name" => $row["name"], "email" => $row["email"]);
+                                                }
+						foreach ($friender_users as $key => $value) {
+							if (array_key_exists($key, $friended_users)) {
+								$friends[$key] = $value;
+							} else {
+								$requests[$key] = $value;
+							}
+						}
+					}
+
+					if ($friends) {
+						?>
+						<h4>Friends</h4>
+						<table class='table'>
+							<tbody>
+								<?php
+								foreach ($friends as $key => $value) {
+									echo "<tr> \n";
+									echo "<td><a href='user.php?u=" . $value["uid"] . "'>" . $value["name"] . "</a></td>
+\n";
+									echo "<td>" . $value["email"] . "</td> \n";
+									echo "</tr> \n";
+								}
+								?>
+							</tbody>
+						</table>
+						<?php
+					} else {
+						?>
+						<h4>Friends</h4>
+						<p>You have no friends. <a href='user.php'>Look for some.</a></p>
+						<?php
+					}
+					
+					if ($requests) {
+					?>
+					<h4>Friend Requests</h4>
+						<table class='table'>
+							<tbody>
+							<?php 
+								foreach($requests as $key => $value) {
+									echo "<tr> \n";
+									echo "<td><a href='user.php?u=" . $value["uid"] . "'>" . $value["name"] . "</a></td> \n";
+									echo "<td>" . $value["email"] . "</td> \n";
+									echo "</tr> \n";
+								}
+							?>
+							</tbody>
+						</table>
+					<?php
+					}
+				}
+				?>
 			</div>
 		</div>
 
