@@ -25,6 +25,116 @@
 
     if (isset($_GET["u"])) {
 
+	$friender = false;
+	$friended = false;
+
+	if (isset($_COOKIE["uid"]) && $_COOKIE["uid"] != $_GET["u"]) {
+		
+
+		if (isset($_GET["friend"]) && $_GET["friend"]) {
+			$datetime = date('Y-m-d H:i:s');
+			$statement = "insert ignore into friends (uidFriender, uidFriended, requestTime) values (" . $_COOKIE["uid"] . ", " . $_GET["u"]
+. ", '" . $datetime . "');";
+			$response = $db->query($statement);
+		}
+
+		if (isset($_GET["unfriend"]) && $_GET["unfriend"]) {
+			$statement = "delete from friends where (uidFriender=" . $_COOKIE["uid"] . " and uidFriended=" . $_GET["u"] . ") or
+(uidFriender=" . $_GET["u"] . " and uidFriended=" . $_COOKIE["uid"] . ");";
+			$response = $db->query($statement);
+		}
+
+		$statement = "select * from friends where (uidFriender=" . $_GET["u"] . " and uidFriended=" . $_COOKIE["uid"] . ") or (uidFriender=" .
+$_COOKIE["uid"] . " and uidFriended=" . $_GET["u"] . ");";
+		$response = $db->query($statement);
+
+		if ($response && $response->num_rows > 0) {
+			$response->data_seek(0);
+			while($row = $response->fetch_assoc()) {
+				if ($row["uidFriender"] == $_COOKIE["uid"]) {
+					$friender = true;
+				}
+				if ($row["uidFriended"] == $_COOKIE["uid"]) {
+					$friended = true;
+				}
+			}
+		}
+
+	}
+
+	$statement = "select * from users where uid=" . $_GET["u"] . ";";
+	$response = $db->query($statement);
+	if ($response && $response->num_rows > 0) {
+		$response->data_seek(0);
+		$row = $response->fetch_assoc();
+		?>
+
+		<h2>Movienet user <?php echo $row["name"]; 
+					if ($friender && $friended) {
+						echo "<span class='label label-info'>Is your friend</span> \n";
+					} else if ($friended) {
+						echo "<a href='user.php?u=" . $_COOKIE["uid"] . "'><span class='label label-info'>Requested you as a
+friend</span></a>";
+					}?></h2>
+		<div class='row'
+			<div class='span4'>
+				<dl class='dl-horizontal'>
+					<dt>Name</dt><dd><?php echo $row["name"]; ?></dd>
+					<dt>Email</dt><dd><?php echo $row["email"]; ?></dd>
+					<?php
+						if ($row["age"]) {
+							echo "<dt>Age</dt><dd>" . $row["age"] . "</dd> \n";
+						}
+						if ($row["location"]) {
+							echo "<dt>Location</dt><dd>" . $row["location"] . "</dd> \n";
+						}
+						if ($row["gender"]) {
+							echo "<dt>Gender</dt><dd>" . $row["gender"] . "</dd> \n";
+						}
+					?>
+				</dl>
+				<?php 
+					if (isset($_COOKIE["uid"]) && $_COOKIE["uid"] != $row["uid"]) {
+						
+
+						if ($friender && $friended) {
+							?>
+								<form>  
+                                                        		<input type='hidden' name='u' value='<?php echo $_GET["u"]; ?>'>
+                                                        		<input type='hidden' name='unfriend' value='true'>
+                                                        		<button type='submit' class='btn btn-primary'>Unfriend</button>
+                                                		</form>
+							<?php
+						} else if ($friender) {
+							?>
+								<button type='button' disabled>Friend Request Sent</button>
+							<?php
+						} else {
+							?>
+							<form>
+                                                        	<input type='hidden' name='u' value='<?php echo $_GET["u"]; ?>'>
+                                                        	<input type='hidden' name='friend' value='true'>
+                                                        	<button type='submit' class='btn btn-primary'>Friend Request</button>
+                                                	</form>
+							<?php
+						}
+					}
+				?>
+			</div>
+			<div class='span8'>
+			</div>
+		</div>
+
+		<?php
+	} else {
+		?>
+		<div class='text-center'>
+			<h2>We couldn't find that user.</h2>
+			<p>You can try <a href='user.php'>searching</a> for them.</p>
+		</div>
+		<?php
+	}
+
     } else {
 		?>
 
