@@ -344,7 +344,7 @@ $_COOKIE["uid"] . ";";
 						$response->data_seek(0);
 						while($row = $response->fetch_assoc()) {
 							echo "<tr> \n";
-							echo "<td><a href='user.php?u='" . $row["uid"] . "'>" . $row["name"] . "</a></td> \n";
+							echo "<td><a href='user.php?u=" . $row["uid"] . "'>" . $row["name"] . "</a></td> \n";
 							echo "<td>" . $row["email"] . "</td> \n";
 							echo "<td>" . $row["age"] . "</td> \n";
 							echo "<td>" . $row["location"] . "</td> \n";
